@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ SamzCloud</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --card: #1a1a2e;
+            --border: #2a2a4a;
+            --primary: #7c4dff;
+            --primary-dark: #6a3de8;
+            --text: #e0e0e0;
+            --text-dim: #8888aa;
+            --success: #4caf50;
+            --danger: #f44336;
+            --warning: #ff9800;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #1a1a2e);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .header h1 {
+            font-size: 28px;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+        .header .subtitle {
+            color: var(--text-dim);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+        .header .stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .header .stat {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+        .header .stat strong {
+            color: var(--primary);
+            font-size: 16px;
+            display: block;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        .status-dot.online { background: var(--success); }
+        .status-dot.offline { background: var(--danger); }
+        .status-dot.checking { background: var(--warning); }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 10px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--text-dim);
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .tab:hover { border-color: var(--primary); }
+        .tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Panels */
+        .panel { display: none; }
+        .panel.active { display: block; }
+
+        /* Chat */
+        .chat-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            height: 400px;
+            overflow-y: auto;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        .msg {
+            padding: 10px 14px;
+            border-radius: 14px;
+            margin: 6px 0;
+            max-width: 85%;
+            word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .msg.user {
+            background: var(--primary);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        .msg.ai {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+        }
+        .msg.ai .label {
+            font-size: 10px;
+            color: var(--primary);
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        .msg.system {
+            background: var(--surface);
+            border: 1px dashed var(--border);
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        /* Input */
+        .input-area {
+            display: flex;
+            gap: 8px;
+        }
+        .input-area input, .input-area textarea {
+            flex: 1;
+            padding: 14px 18px;
+            border-radius: 25px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+            resize: none;
+        }
+        .input-area input:focus, .input-area textarea:focus {
+            border-color: var(--primary);
+        }
+        .input-area button {
+            padding: 14px 24px;
+            border-radius: 25px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .input-area button:hover { background: var(--primary-dark); }
+        .input-area button:disabled { background: var(--border); cursor: not-allowed; }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        .card h3 {
+            color: var(--primary);
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        .card p {
+            color: var(--text-dim);
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        /* API Keys */
+        .key-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .key-info { flex: 1; }
+        .key-prefix {
+            font-family: monospace;
+            color: var(--primary);
+            font-size: 14px;
+        }
+        .key-meta {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+        .delete-btn {
+            background: none;
+            border: none;
+            color: var(--danger);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .delete-btn:hover { background: rgba(244, 67, 54, 0.1); }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        .modal-content h3 { margin-bottom: 12px; color: var(--primary); }
+        .modal-content p {
+            color: var(--text-dim);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-cancel { background: var(--border); color: var(--text); }
+        .btn-cancel:hover { background: #3a3a5a; }
+        .btn-delete { background: var(--danger); color: white; }
+        .btn-delete:hover { background: #d32f2f; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+
+        /* Logs */
+        .log-view {
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #4caf50;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .tabs { overflow-x: auto; flex-wrap: nowrap; }
+            .tab { flex-shrink: 0; }
+            .header h1 { font-size: 22px; }
+            .chat-box { height: 300px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>⚡ SamzCloud</h1>
+            <div class="subtitle">Personal Cloud Platform | 212GB Storage | Multi-Module AI</div>
+            <div class="stats" id="headerStats">
+                <div class="stat"><strong>--</strong>Storage Used</div>
+                <div class="stat"><strong>--</strong>Projects</div>
+                <div class="stat"><strong>--</strong>API Keys</div>
+            </div>
+        </div>
+
+        <!-- Status -->
+        <div class="status-bar">
+            <span class="status-dot checking" id="statusDot"></span>
+            <span id="statusText">Connecting to SamzCloud...</span>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('chat')">💬 Chat</div>
+            <div class="tab" onclick="switchTab('compute')">🔢 Compute</div>
+            <div class="tab" onclick="switchTab('research')">🔍 Research</div>
+            <div class="tab" onclick="switchTab('decide')">🎯 Decide</div>
+            <div class="tab" onclick="switchTab('miner')">📊 Miner</div>
+            <div class="tab" onclick="switchTab('collab')">👥 Collab</div>
+            <div class="tab" onclick="switchTab('deploy')">🚀 Deploy</div>
+            <div class="tab" onclick="switchTab('keys')">🔑 Keys</div>
+            <div class="tab" onclick="switchTab('storage')">💾 Storage</div>
+        </div>
+
+        <!-- Chat Panel -->
+        <div class="panel active" id="panel-chat">
+            <div class="chat-box" id="chatBox">
+                <div class="msg ai">
+                    <div class="label">SamzCloud AI</div>
+                    Hello! I'm your personal AI assistant. I can chat, run calculations, do research, simulate decisions, and more. What can I help you with?
+                </div>
+            </div>
+            <div class="input-area">
+                <input id="chatInput" type="text" placeholder="Ask me anything..." onkeypress="if(event.key==='Enter') sendChat()">
+                <button id="chatBtn" onclick="sendChat()">Send</button>
+            </div>
+        </div>
+
+        <!-- Compute Panel -->
+        <div class="panel" id="panel-compute">
+            <div class="card">
+                <h3>🔢 Compute Engine</h3>
+                <p>Statistical analysis, predictive algorithms, probability, and risk assessment.</p>
+            </div>
+            <div class="chat-box" id="computeBox">
+                <div class="msg ai">
+                    <div class="label">Compute Engine</div>
+                    Try:<br>
+                    • "predict 10, 25, 45, 70, 100"<br>
+                    • "statistics of 23, 45, 67, 89, 12, 56"<br>
+                    • "probability of 5 out of 100"
+                </div>
+            </div>
+            <div class="input-area">
+                <input id="computeInput" type="text" placeholder="Enter data for analysis..." onkeypress="if(event.key==='Enter') sendCompute()">
+                <button onclick="sendCompute()">Compute</button>
+            </div>
+        </div>
+
+        <!-- Research Panel -->
+        <div class="panel" id="panel-research">
+            <div class="card">
+                <h3>🔍 Research Agent</h3>
+                <p>Multi-source research: Tavily, SerpAPI, Wikipedia, DuckDuckGo, arXiv</p>
+            </div>
+            <div class="chat-box" id="researchBox">
+                <div class="msg ai">
+                    <div class="label">Research Agent</div>
+                    Enter a topic to research. I'll search multiple sources and provide findings.
+                </div>
+            </div>
+            <div class="input-area">
+                <input id="researchInput" type="text" placeholder="Research topic..." onkeypress="if(event.key==='Enter') sendResearch()">
+                <button onclick="sendResearch()">Research</button>
+            </div>
+        </div>
+
+        <!-- Decision Panel -->
+        <div class="panel" id="panel-decide">
+            <div class="card">
+                <h3>🎯 Decision Simulator</h3>
+                <p>Monte Carlo simulation, risk analysis, and Bayesian probability.</p>
+            </div>
+            <div class="input-area" style="flex-direction: column; gap: 8px;">
+                <input id="decisionName" type="text" placeholder="Decision (e.g., 'Launch product next month')">
+                <input id="decisionOptions" type="text" placeholder="Options (comma separated, e.g., 'Launch now, Wait, Cancel')">
+                <button onclick="sendDecision()">Simulate</button>
+            </div>
+            <div class="chat-box" id="decisionBox" style="margin-top: 12px;"></div>
+        </div>
+
+        <!-- Miner Panel -->
+        <div class="panel" id="panel-miner">
+            <div class="card">
+                <h3>📊 Personal Data Miner</h3>
+                <p>Find patterns, detect anomalies, and predict trends in your data.</p>
+            </div>
+            <div class="input-area" style="flex-direction: column; gap: 8px;">
+                <input id="minerData" type="text" placeholder="Numbers (comma separated, e.g., '10, 20, 30, 40, 50')">
+                <button onclick="sendMinerPredict()">Predict Next</button>
+            </div>
+            <div class="chat-box" id="minerBox" style="margin-top: 12px;"></div>
+        </div>
+
+        <!-- Collab Panel -->
+        <div class="panel" id="panel-collab">
+            <div class="card">
+                <h3>👥 Collaborative Workspace</h3>
+                <p>Multi-user AI-moderated sessions with voting and task tracking.</p>
+            </div>
+            <div class="input-area" style="flex-direction: column; gap: 8px;">
+                <input id="collabName" type="text" placeholder="Session name">
+                <input id="collabParticipants" type="text" placeholder="Participants (comma separated)">
+                <button onclick="createCollab()">Create Session</button>
+            </div>
+            <div class="chat-box" id="collabBox" style="margin-top: 12px;"></div>
+        </div>
+
+        <!-- Deploy Panel -->
+        <div class="panel" id="panel-deploy">
+            <div class="card">
+                <h3>🚀 Deploy Project</h3>
+                <p>Deploy any GitHub repo as a project running inside SamzCloud.</p>
+            </div>
+            <div class="input-area" style="flex-direction: column; gap: 8px;">
+                <input id="deployName" type="text" placeholder="Project name">
+                <input id="deployUrl" type="text" placeholder="GitHub URL">
+                <input id="deployKey" type="text" placeholder="API Key" type="password">
+                <button onclick="deployProject()">Deploy</button>
+            </div>
+            <div id="deployStatus" style="margin-top: 12px;"></div>
+        </div>
+
+        <!-- API Keys Panel -->
+        <div class="panel" id="panel-keys">
+            <div class="card">
+                <h3>🔑 API Keys</h3>
+                <p>Generate and manage API keys for accessing SamzCloud services.</p>
+            </div>
+            <button class="btn-primary" onclick="generateKey()" style="width:100%; padding:14px; border-radius:12px; margin-bottom:12px;">
+                + Generate New API Key
+            </button>
+            <div id="keysList">Loading keys...</div>
+        </div>
+
+        <!-- Storage Panel -->
+        <div class="panel" id="panel-storage">
+            <div class="card">
+                <h3>💾 Storage</h3>
+                <p>SamzCloud's self-contained storage: 128GB Virtual Disk + 84GB ROM.</p>
+                <div id="storageInfo">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <h3>Delete API Key?</h3>
+            <p id="deleteKeyText">This action cannot be undone.</p>
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-delete" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== CONFIGURATION ==========
+        const API_URL = "https://samzcloud.onrender.com";
+        let keyToDelete = null;
+        let userId = "web_user_" + Math.random().toString(36).substring(7);
+
+        // ========== SERVER CHECK ==========
+        async function checkServer() {
+            const dot = document.getElementById("statusDot");
+            const text = document.getElementById("statusText");
+            dot.className = "status-dot checking";
+            
+            try {
+                const r = await fetch(API_URL + "/health");
+                const d = await r.json();
+                dot.className = "status-dot online";
+                text.textContent = `Online | v${d.version} | ${d.deployment}`;
+                
+                // Update header stats
+                const stats = document.querySelectorAll("#headerStats .stat strong");
+                if (d.storage && d.storage.virtual_disk) {
+                    stats[0].textContent = d.storage.virtual_disk.used_gb + "GB";
+                    stats[1].textContent = "--";
+                    stats[2].textContent = "--";
+                }
+            } catch(e) {
+                dot.className = "status-dot offline";
+                text.textContent = "Server offline — check Render deployment";
+            }
+        }
+
+        // ========== TABS ==========
+        function switchTab(tab) {
+            document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+            document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+            
+            const tabIndex = ["chat","compute","research","decide","miner","collab","deploy","keys","storage"].indexOf(tab);
+            document.querySelectorAll(".tab")[tabIndex].classList.add("active");
+            document.getElementById(`panel-${tab}`).classList.add("active");
+            
+            if (tab === "keys") loadKeys();
+            if (tab === "storage") loadStorage();
+        }
+
+        // ========== CHAT ==========
+        async function sendChat() {
+            const input = document.getElementById("chatInput");
+            const btn = document.getElementById("chatBtn");
+            const msg = input.value.trim();
+            if (!msg) return;
+            
+            const box = document.getElementById("chatBox");
+            box.innerHTML += `<div class="msg user">${escapeHtml(msg)}</div>`;
+            input.value = "";
+            btn.disabled = true;
+            box.innerHTML += `<div class="msg ai"><div class="label">SamzCloud AI</div>Thinking...</div>`;
+            box.scrollTop = box.scrollHeight;
+            
+            try {
+                const r = await fetch(`${API_URL}/ai/chat?user_id=${userId}&message=${encodeURIComponent(msg)}`);
+                const d = await r.json();
+                const msgs = box.querySelectorAll(".ai");
+                msgs[msgs.length - 1].innerHTML = `<div class="label">SamzCloud AI</div>${escapeHtml(d.response || "No response")}`;
+            } catch(e) {
+                const msgs = box.querySelectorAll(".ai");
+                msgs[msgs.length - 1].innerHTML = `<div class="label">Error</div>${escapeHtml(e.message)}`;
+            }
+            
+            btn.disabled = false;
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // ========== COMPUTE ==========
+        async function sendCompute() {
+            const input = document.getElementById("computeInput");
+            const msg = input.value.trim();
+            if (!msg) return;
+            
+            const box = document.getElementById("computeBox");
+            box.innerHTML += `<div class="msg user">${escapeHtml(msg)}</div>`;
+            input.value = "";
+            box.innerHTML += `<div class="msg ai"><div class="label">Computing...</div>Running analysis...</div>`;
+            box.scrollTop = box.scrollHeight;
+            
+            try {
+                const r = await fetch(`${API_URL}/ai/compute?message=${encodeURIComponent(msg)}`);
+                const d = await r.json();
+                const msgs = box.querySelectorAll(".ai");
+                msgs[msgs.length - 1].innerHTML = `<div class="label">Results</div><pre style="white-space:pre-wrap;font-size:12px;background:#000;padding:10px;border-radius:8px;overflow-x:auto;">${escapeHtml(JSON.stringify(d, null, 2))}</pre>`;
+            } catch(e) {
+                const msgs = box.querySelectorAll(".ai");
+                msgs[msgs.length - 1].innerHTML = `<div class="label">Error</div>${escapeHtml(e.message)}`;
+            }
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // ========== RESEARCH ==========
+        async function sendResearch() {
+            const input = document.getElementById("researchInput");
+            const query = input.value.trim();
+            if (!query) return;
+            
+            const box = document.getElementById("researchBox");
+            box.innerHTML += `<div class="msg user">${escapeHtml(query)}</div>`;
+            input.value = "";
+            box.innerHTML += `<div class="msg ai"><div class="label">Researching...</div>Searching multiple sources...</div>`;
+            box.scrollTop = box.scrollHeight;
+            
+            try {
+                const r = await fetch(`${API_URL}/research/search?query=${encodeURIComponent(query)}&max_results=5`);
+                const d = await r.json();
+                const msgs = box.querySelectorAll(".ai");
+                
+                let html = `<div class="label">Research Results</div>`;
+                html += `<p style="font-size:12px;color:#888;margin-bottom:8px;">Sources: ${(d.sources_used || []).join(", ") || "none"} | Results: ${d.total_results || 0}</p>`;
+                
+                if (d.results && d.results.length > 0) {
+                    d.results.forEach(res => {
+                        html += `<div style="margin:8px 0;padding:10px;background:#1a1a2e;border-radius:8px;border:1px solid #2a2a4a;">`;
+                        html += `<strong style="color:#7c4dff;font-size:13px;">${escapeHtml(res.title || "Untitled")}</strong>`;
+                        html += `<p style="font-size:12px;margin-top:4px;color:#ccc;">${escapeHtml((res.content || "").substring(0, 250))}...</p>`;
+                        if (res.url && res.url !== "tavily_ai") {
+                            html += `<a href="${escapeHtml(res.url)}" target="_blank" style="color:#4caf50;font-size:11px;text-decoration:none;">📎 Source →</a>`;
+                        }
+                        html += `</div>`;
+                    });
+                } else {
+                    html += `<p style="color:#888;">No results found. Try a different query.</p>`;
+                }
+                
+                msgs[msgs.length - 1].innerHTML = html;
+            } catch(e) {
+                const msgs = box.querySelectorAll(".ai");
+                msgs[msgs.length - 1].innerHTML = `<div class="label">Error</div>${escapeHtml(e.message)}`;
+            }
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // ========== DECISION ==========
+        async function sendDecision() {
+            const name = document.getElementById("decisionName").value.trim();
+            const optionsStr = document.getElementById("decisionOptions").value.trim();
+            
+            if (!name || !optionsStr) {
+                alert("Enter decision name and options (comma separated)");
+                return;
+            }
+            
+            const options = optionsStr.split(",").map(o => o.trim()).filter(o => o);
+            const box = document.getElementById("decisionBox");
+            
+            box.innerHTML = `<div class="msg ai"><div class="label">Simulating...</div>Running 1000 Monte Carlo simulations...</div>`;
+            box.scrollTop = box.scrollHeight;
+            
+            try {
+                const factors = {
+                    risk_tolerance: 5,
+                    time_horizon_days: 30,
+                    success_value: 100,
+                    failure_cost: -50
+                };
+                
+                const r = await fetch(`${API_URL}/decide/simulate?decision=${encodeURIComponent(name)}&options=${encodeURIComponent(JSON.stringify(options))}&factors=${encodeURIComponent(JSON.stringify(factors))}&simulations=1000`);
+                const d = await r.json();
+                
+                let html = `<div class="label">🎯 Simulation Results</div>`;
+                
+                if (d.ranking && d.ranking.length > 0) {
+                    html += `<div style="background:#1a3a1a;border:1px solid #2a5a2a;border-radius:8px;padding:10px;margin-bottom:10px;">`;
+                    html += `<strong style="color:#4caf50;">🏆 Recommendation: ${escapeHtml(d.ranking[0].option)}</strong>`;
+                    html += `</div>`;
+                    
+                    d.ranking.forEach((r, i) => {
+                        const bg = i === 0 ? "#1a1a3e" : "#1a1a2e";
+                        html += `<div style="margin:6px 0;padding:10px;background:${bg};border-radius:8px;border:1px solid #2a2a4a;">`;
+                        html += `<strong>#${i+1}: ${escapeHtml(r.option)}</strong><br>`;
+                        html += `<span style="font-size:12px;color:#888;">Score: ${r.score} | Success: ${r.success_pct}% | Risk: ${r.risk}</span>`;
+                        html += `</div>`;
+                    });
+                } else {
+                    html += `<p style="color:#888;">No results. Check your input.</p>`;
+                }
+                
+                box.innerHTML = html;
+            } catch(e) {
+                box.innerHTML = `<div class="msg ai"><div class="label">Error</div>${escapeHtml(e.message)}</div>`;
+            }
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // ========== MINER ==========
+        async function sendMinerPredict() {
+            const dataStr = document.getElementById("minerData").value.trim();
+            if (!dataStr) {
+                alert("Enter numbers (comma separated)");
+                return;
+            }
+            
+            const numbers = dataStr.split(",").map(n => parseFloat(n.trim())).filter(n => !isNaN(n));
+            
+            if (numbers.length < 3) {
+                alert("Need at least 3 numbers for prediction");
+                return;
+            }
+            
+            const box = document.getElementById("minerBox");
+            box.innerHTML = `<div class="msg ai"><div class="label">Analyzing...</div>Finding patterns in ${numbers.length} data points...</div>`;
+            
+            try {
+                const r = await fetch(`${API_URL}/miner/predict?data=${encodeURIComponent(JSON.stringify(numbers))}&periods=3`);
+                const d = await r.json();
+                
+                let html = `<div class="label">📊 Prediction Results</div>`;
+                html += `<pre style="white-space:pre-wrap;font-size:12px;background:#000;padding:10px;border-radius:8px;color:#4caf50;">${escapeHtml(JSON.stringify(d, null, 2))}</pre>`;
+                
+                if (d.ensemble && d.ensemble.length > 0) {
+                    html += `<div style="margin-top:8px;padding:10px;background:#1a1a2e;border-radius:8px;">`;
+                    html += `<strong style="color:#7c4dff;">Next ${d.ensemble.length} predictions:</strong> `;
+                    html += d.ensemble.map(p => `<span style="color:#4caf50;">${p}</span>`).join(", ");
+                    html += `</div>`;
+                    html += `<p style="font-size:12px;color:#888;margin-top:8px;">Trend: ${d.trend || "unknown"}</p>`;
+                }
+                
+                box.innerHTML = html;
+            } catch(e) {
+                box.innerHTML = `<div class="msg ai"><div class="label">Error</div>${escapeHtml(e.message)}</div>`;
+            }
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // ========== COLLAB ==========
+        let currentCollabSession = null;
+        
+        async function createCollab() {
+            const name = document.getElementById("collabName").value.trim();
+            const participants = document.getElementById("collabParticipants").value.trim();
+            
+            if (!name || !participants) {
+                alert("Enter session name and participants");
+                return;
+            }
+            
+            const participantsList = participants.split(",").map(p => p.trim()).filter(p => p);
+            const box = document.getElementById("collabBox");
+            
+            try {
+                const r = await fetch(`${API_URL}/collab/create?name=${encodeURIComponent(name)}&participants=${encodeURIComponent(JSON.stringify(participantsList))}`);
+                const d = await r.json();
+                
+                currentCollabSession = d.session_id;
+                
+                let html = `<div class="msg ai"><div class="label">👥 Session Created</div>`;
+                html += `<strong>${escapeHtml(name)}</strong><br>`;
+                html += `Participants: ${participantsList.map(p => escapeHtml(p)).join(", ")}<br>`;
+                html += `<small style="color:#888;">Session ID: ${escapeHtml(d.session_id)}</small>`;
+                html += `</div>`;
+                
+                html += `<div class="msg ai"><div class="label">AI Moderator</div>${escapeHtml(d.welcome || "Session ready. Add messages to collaborate.")}</div>`;
+                
+                box.innerHTML = html;
+                box.scrollTop = box.scrollHeight;
+            } catch(e) {
+                box.innerHTML = `<div class="msg ai"><div class="label">Error</div>${escapeHtml(e.message)}</div>`;
+            }
+        }
+        
+        async function sendCollabMessage() {
+            if (!currentCollabSession) {
+                alert("Create a session first");
+                return;
+            }
+            
+            const input = document.getElementById("collabMessage");
+            const msg = input.value.trim();
+            if (!msg) return;
+            
+            const box = document.getElementById("collabBox");
+            box.innerHTML += `<div class="msg user">You: ${escapeHtml(msg)}</div>`;
+            input.value = "";
+            
+            try {
+                const r = await fetch(`${API_URL}/collab/${currentCollabSession}/message?user=web_user&content=${encodeURIComponent(msg)}`);
+                const d = await r.json();
+                
+                if (d.ai_response) {
+                    box.innerHTML += `<div class="msg ai"><div class="label">AI Moderator</div>${escapeHtml(d.ai_response)}</div>`;
+                }
+                if (d.tasks_updated > 0) {
+                    box.innerHTML += `<div class="msg system">📋 ${d.tasks_updated} task(s) tracked</div>`;
+                }
+            } catch(e) {
+                box.innerHTML += `<div class="msg ai"><div class="label">Error</div>${escapeHtml(e.message)}</div>`;
+            }
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // ========== DEPLOY ==========
+        async function deployProject() {
+            const name = document.getElementById("deployName").value.trim();
+            const url = document.getElementById("deployUrl").value.trim();
+            const key = document.getElementById("deployKey").value.trim();
+            
+            if (!name || !url || !key) {
+                alert("Enter project name, GitHub URL, and API key");
+                return;
+            }
+            
+            const statusDiv = document.getElementById("deployStatus");
+            statusDiv.innerHTML = `<div class="log-view">⏳ Registering project...\nName: ${name}\nURL: ${url}</div>`;
+            
+            try {
+                // Step 1: Register
+                const addR = await fetch(`${API_URL}/deploy/add?name=${encodeURIComponent(name)}&github_url=${encodeURIComponent(url)}&api_key=${encodeURIComponent(key)}`);
+                const addD = await addR.json();
+                
+                if (addD.error) {
+                    statusDiv.innerHTML = `<div class="log-view">❌ ${escapeHtml(addD.error)}</div>`;
+                    return;
+                }
+                
+                statusDiv.innerHTML = `<div class="log-view">✅ Registered. Deploying...\nCloning from GitHub...</div>`;
+                
+                // Step 2: Deploy
+                const deployR = await fetch(`${API_URL}/deploy/${name}?api_key=${encodeURIComponent(key)}`);
+                const deployD = await deployR.json();
+                
+                if (deployD.error) {
+                    statusDiv.innerHTML = `<div class="log-view">❌ Deploy failed:\n${escapeHtml(deployD.error)}</div>`;
+                    return;
+                }
+                
+                let html = `<div class="log-view">✅ Deployment Successful!\n\n`;
+                html += `Project: ${escapeHtml(name)}\n`;
+                html += `Port: ${deployD.port || "unknown"}\n`;
+                html += `Status: ${deployD.status || "deployed"}\n`;
+                
+                if (deployD.log && deployD.log.length > 0) {
+                    html += `\n--- Build Log ---\n`;
+                    html += deployD.log.slice(-20).join("\n");
+                }
+                
+                html += `</div>`;
+                statusDiv.innerHTML = html;
+                
+                // Refresh deploy list
+                loadDeployStatus();
+                
+            } catch(e) {
+                statusDiv.innerHTML = `<div class="log-view">❌ Error:\n${escapeHtml(e.message)}</div>`;
+            }
+        }
+        
+        async function loadDeployStatus() {
+            try {
+                const r = await fetch(API_URL + "/deploy/status");
+                const d = await r.json();
+                
+                const statusDiv = document.getElementById("deployStatus");
+                let html = `<div class="card"><h3>Deployed Projects</h3>`;
+                
+                const projects = Object.keys(d);
+                if (projects.length === 0) {
+                    html += `<p style="color:#888;">No projects deployed yet.</p>`;
+                } else {
+                    projects.forEach(name => {
+                        const p = d[name];
+                        html += `<div style="margin:8px 0;padding:10px;background:#1a1a2e;border-radius:8px;">`;
+                        html += `<strong style="color:#7c4dff;">${escapeHtml(name)}</strong>`;
+                        html += `<span style="float:right;color:${p.status === 'running' ? '#4caf50' : '#f44336'};">● ${p.status}</span>`;
+                        html += `<br><small style="color:#888;">Port: ${p.port} | ${escapeHtml(p.github || "")}</small>`;
+                        html += `</div>`;
+                    });
+                }
+                html += `</div>`;
+                statusDiv.innerHTML = html;
+            } catch(e) {
+                // Silently fail
+            }
+        }
+
+        // ========== API KEYS ==========
+        async function loadKeys() {
+            const list = document.getElementById("keysList");
+            try {
+                const r = await fetch(API_URL + "/auth/keys");
+                const keys = await r.json();
+                
+                if (!keys || keys.length === 0) {
+                    list.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">No API keys yet</div>';
+                    return;
+                }
+                
+                list.innerHTML = keys.map(k => `
+                    <div class="key-card">
+                        <div class="key-info">
+                            <div class="key-prefix">${escapeHtml(k.prefix)}...</div>
+                            <div class="key-meta">${escapeHtml(k.type)} | ${escapeHtml(k.name || 'unnamed')} | Used ${k.use_count}x</div>
+                            ${k.revoked ? '<div style="color:#f44336;font-size:10px;">REVOKED</div>' : ''}
+                        </div>
+                        <button class="delete-btn" onclick="confirmDelete('${k.id}', '${escapeHtml(k.prefix)}')" ${k.revoked ? 'disabled' : ''}>✕</button>
+                    </div>
+                `).join("");
+            } catch(e) {
+                list.innerHTML = "Error loading keys";
+            }
+        }
+
+        async function generateKey() {
+            try {
+                // Step 1: Get challenge
+                const challengeResp = await fetch(API_URL + "/auth/challenge");
+                const challenge = await challengeResp.json();
+                
+                // Step 2: Solve proof-of-work
+                const nonce = await solveChallenge(challenge.challenge, challenge.difficulty);
+                
+                // Step 3: Generate key
+                const r = await fetch(`${API_URL}/auth/generate-key?challenge_id=${challenge.challenge_id}&nonce=${nonce}&name=web_generated`);
+                const key = await r.json();
+                
+                if (key.api_key) {
+                    alert(`Your API Key (save it now!):\n\n${key.api_key}`);
+                    loadKeys();
+                } else {
+                    alert("Error: " + (key.error || "Failed to generate key"));
+                }
+            } catch(e) {
+                alert("Error generating key: " + e.message);
+            }
+        }
+
+        function confirmDelete(keyId, prefix) {
+            keyToDelete = keyId;
+            document.getElementById("deleteKeyText").textContent = `Delete key "${prefix}..."? This cannot be undone.`;
+            document.getElementById("deleteModal").classList.add("active");
+        }
+
+        function closeModal() {
+            document.getElementById("deleteModal").classList.remove("active");
+            keyToDelete = null;
+        }
+
+        document.getElementById("confirmDeleteBtn").addEventListener("click", async () => {
+            if (keyToDelete) {
+                try {
+                    await fetch(`${API_URL}/auth/keys/${keyToDelete}?confirm=true`, { 
+                        method: "DELETE" 
+                    });
+                    closeModal();
+                    loadKeys();
+                } catch(e) {
+                    alert("Error deleting key: " + e.message);
+                }
+            }
+        });
+
+        // ========== STORAGE ==========
+        async function loadStorage() {
+            const div = document.getElementById("storageInfo");
+            try {
+                const r = await fetch(API_URL + "/storage/info");
+                const d = await r.json();
+                
+                div.innerHTML = `
+                    <div style="margin:12px 0;padding:12px;background:#1a1a2e;border-radius:8px;border:1px solid #2a2a4a;">
+                        <strong style="color:#7c4dff;">📦 Storage Location:</strong><br>
+                        <code style="font-size:11px;color:#888;word-break:break-all;">${escapeHtml(d.location)}</code>
+                    </div>
+                    <div style="margin:12px 0;padding:12px;background:#1a1a2e;border-radius:8px;border:1px solid #2a2a4a;">
+                        <strong style="color:#7c4dff;">💾 Virtual Disk:</strong> ${d.virtual_disk ? d.virtual_disk.max_gb + "GB" : "N/A"}<br>
+                        <small style="color:#888;">Purpose: Projects, files, databases</small>
+                    </div>
+                    <div style="margin:12px 0;padding:12px;background:#1a1a2e;border-radius:8px;border:1px solid #2a2a4a;">
+                        <strong style="color:#7c4dff;">🔒 ROM:</strong> ${d.rom ? d.rom.max_gb + "GB" : "N/A"}<br>
+                        <small style="color:#888;">Allocations:</small><br>
+                        ${d.rom && d.rom.allocations ? Object.entries(d.rom.allocations).map(([k,v]) => 
+                            `<small style="color:#888;">• ${escapeHtml(k)}: ${v}GB</small><br>`
+                        ).join("") : '<small style="color:#888;">Loading allocations...</small>'}
+                    </div>
+                    <div style="margin:12px 0;padding:12px;background:#1a3a1a;border-radius:8px;border:1px solid #2a5a2a;">
+                        <strong style="color:#4caf50;">📊 Total Platform Storage: ${d.total_platform_storage_gb || "N/A"}GB</strong>
+                    </div>
+                    <div style="margin:12px 0;padding:12px;background:#1a1a2e;border-radius:8px;font-size:12px;color:#888;border:1px solid #2a2a4a;">
+                        ℹ️ ${escapeHtml(d.note || "SamzCloud self-contained storage")}
+                    </div>
+                `;
+            } catch(e) {
+                div.innerHTML = `<div style="color:#f44336;padding:20px;text-align:center;">Error loading storage info: ${escapeHtml(e.message)}</div>`;
+            }
+        }
+
+        // ========== PROOF-OF-WORK SOLVER ==========
+        async function solveChallenge(challenge, difficulty) {
+            const target = "0".repeat(difficulty);
+            let nonce = 0;
+            while (true) {
+                const hash = await sha256(challenge + nonce);
+                if (hash.startsWith(target)) return nonce.toString();
+                nonce++;
+            }
+        }
+
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+        }
+
+        // ========== UTILITY ==========
+        function escapeHtml(text) {
+            if (!text) return "";
+            const div = document.createElement("div");
+            div.textContent = String(text);
+            return div.innerHTML;
+        }
+
+        // ========== INITIALIZATION ==========
+        checkServer();
+        setInterval(checkServer, 30000);
+        
+        // Load deploy status after 2 seconds
+        setTimeout(loadDeployStatus, 2000);
+        
+        // Load storage info when tab is opened
+        const storageTab = document.querySelectorAll(".tab")[8];
+        if (storageTab) {
+            storageTab.addEventListener("click", loadStorage);
+        }
+    </script>
+</body>
+</html>
